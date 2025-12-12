@@ -166,7 +166,7 @@ def plot_rf_cv_min_samples_split():
     plt.vlines(
         4, min(r2_30_none), max(r2_30_none),
         color='black', linestyles='dashed',
-        label='max_depth=20'
+        label='min_samples_split=4'
     )
     plt.xlabel("min_samples_split")
     plt.ylabel("R2")
@@ -176,9 +176,54 @@ def plot_rf_cv_min_samples_split():
     plt.legend()
     plt.savefig("graphs/cv_rf_min_samples_split.png", bbox_inches="tight")
 
+def plot_knn_cv_k_neighbors():
+    k_list = list(range(1, 16))
+
+    # weights = 'uniform'
+    r2_uniform = [
+        0.5489, 0.6480, 0.6636, 0.6759, 0.6821,
+        0.6833, 0.6824, 0.6817, 0.6827, 0.6821,
+        0.6809, 0.6808, 0.6777, 0.6751, 0.6718
+    ]
+
+    # weights = 'distance'
+    r2_distance = [
+        0.5489, 0.6492, 0.6670, 0.6795, 0.6859,
+        0.6878, 0.6873, 0.6870, 0.6883, 0.6880,
+        0.6874, 0.6874, 0.6851, 0.6828, 0.6800
+    ]
+
+    plt.figure(figsize=(10, 6))
+    plt.ylim(0.54, 0.70)
+
+    # ---- uniform ----
+
+    plt.plot(k_list, r2_uniform, marker='o',
+             label="weights=uniform", color='tab:blue')
+
+    # ---- distance ----
+
+    plt.plot(k_list, r2_distance, marker='o',
+             label="weights=distance", color='tab:orange')
+    plt.vlines(
+        6, min(r2_distance), max(r2_distance),
+        color='black', linestyles='dashed',
+        label='k_neighbors=6'
+    )
+
+    plt.xlabel("k_neighbors")
+    plt.ylabel("R2")
+    plt.title("KNN Cross-validation (k_neighbors)")
+    plt.grid(True)
+    plt.legend()
+
+    plt.savefig("graphs/cv_knn_k_neighbors.png", bbox_inches="tight")
+    #plt.show()
+
 
 if __name__ == '__main__':
-    plot_rf_cv_n_estimators()
-    plot_rf_cv_max_features()
-    plot_rf_cv_max_depth()
-    plot_rf_cv_min_samples_split()
+    # plot_rf_cv_n_estimators()
+    # plot_rf_cv_max_features()
+    # plot_rf_cv_max_depth()
+    # plot_rf_cv_min_samples_split()
+    plot_knn_cv_k_neighbors()

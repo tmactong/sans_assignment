@@ -11,7 +11,7 @@ import typing as t
 
 
 def user_specified_argument() -> t.Optional[str]:
-    for argument in reversed(settings.CVKNNArguments + settings.CVRFArguments):
+    for argument in settings.CVKNNArguments + list(reversed(settings.CVRFArguments)):
         if f'--{argument}' in sys.argv:
             return argument
 
@@ -28,7 +28,10 @@ def main():
             model = LinearRegression()
         case 'knn':
             """k nearest neighbors"""
-            model = KNeighborsRegressor(n_neighbors=args.k_neighbors)
+            model = KNeighborsRegressor(
+                n_neighbors=args.k_neighbors,
+                weights=args.weights
+            )
         case 'rf':
             """random forest regressor"""
             model = RandomForestRegressor(
