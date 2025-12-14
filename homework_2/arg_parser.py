@@ -7,6 +7,8 @@ def get_cal_parser():
     parser.add_argument(
         '-m', '--model', choices=['mlr', 'rf', 'knn', 'gb'], help='Model name', required=True)
     parser.add_argument('--shuffle', action='store_true', help='Shuffle dataset')
+    parser.add_argument('--train_data_weeks', type=int, choices=[1,2,3,4],
+                        default=4,help='Number of training weeks')
     parser.add_argument('--plot', action='store_true', help='Plot figure')
     parser.add_argument(
         '--train_percentage', type=float, default=0.7,

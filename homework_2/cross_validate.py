@@ -19,9 +19,14 @@ def main():
     parser = get_cv_parser()
     args = parser.parse_args()
     df = load_dataset(args.dataset)
-    x_train, _, y_train, _, _, _ = split_dataset(
-        df, settings.CrossValidationTrainPercentage, shuffle=args.shuffle, random_state=42)
-    y_train = y_train[settings.RefColumn].to_numpy()
+    if args.shuffle:
+        x_train, _, y_train, _, _, _ = split_dataset(
+            df, settings.CrossValidationTrainPercentage, shuffle=True, random_state=42)
+        y_train = y_train[settings.RefColumn].to_numpy()
+    else:
+        """use first 4 weeks data to train"""
+        x_train = df.loc[0:settings.NotShuffledTrainData-1, settings.FeatureColumns]
+        y_train = df.loc[0:settings.NotShuffledTrainData-1, settings.RefColumn].to_numpy()
     match args.model:
         case 'mlr':
             """multiple linear regression"""
@@ -43,7 +48,7 @@ def main():
             )
         case _:
             raise NotImplementedError
-    splitter = KFold(n_splits=5, shuffle=args.shuffle)
+    splitter = KFold(n_splits=5, shuffle=True)
     scores = cross_validate(
         model,
         x_train,

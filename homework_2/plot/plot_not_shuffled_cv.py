@@ -3,107 +3,106 @@ import numpy as np
 
 def plot_rf_cv_n_estimators():
     n_estimators_list = [
-        10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 250, 300, 400, 500, 600, 700, 800, 900, 1000,
-        1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000
+        10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200, 250, 300, 400, 500, 600
     ]
 
     r2_list = [
-        0.8346, 0.8392, 0.8452, 0.8536, 0.8468, 0.8477, 0.8509, 0.8509, 0.8485, 0.8471, 0.8533, 0.8538, 0.8534, 0.8510,
-        0.8528, 0.8553, 0.8530, 0.8514, 0.8520, 0.8516, 0.8525, 0.8527, 0.8543, 0.8521, 0.8503, 0.8484, 0.8509, 0.8503,
-        0.8507, 0.8552
+        0.7899, 0.8003, 0.8150, 0.8082, 0.8156, 0.8033, 0.8113, 0.8154, 0.8143, 0.8221, 0.8165, 0.8115, 0.8056, 0.8079,
+        0.8124, 0.8131
     ]
 
     best_idx = np.argmax(r2_list)
     best_n = n_estimators_list[best_idx]
 
     plt.figure(figsize=(10, 5))
-    plt.ylim(0.83,0.86)
+    plt.ylim(0.78,0.83)
 
     plt.plot(n_estimators_list, r2_list, marker='o', color='tab:blue')
 
     plt.vlines(
         best_n, min(r2_list),max(r2_list),
         color='black', linestyles='dashed',
-        label='n_estimators=600'
+        label='n_estimators=100'
     )
 
     plt.xlabel("n_estimators")
-    plt.ylabel("R2")
+    plt.ylabel(r"$R^2$")
     plt.title("Random Forest Cross-validation (n_estimators)")
     plt.legend()
     plt.tight_layout()
-    plt.savefig("graphs/cv_rf_n_estimators.png")
+    plt.savefig("graphs/not_shuffled_cv_rf_n_estimators.png")
 
 
 def plot_rf_cv_max_features():
     max_features = [1, 2, 3, 4, 5, 6]
 
-    r2_600 = [0.7097,0.7735,0.8095,0.8328,0.8424,0.8491]
+    r2_100 = [0.6755,0.7174,0.7553,0.7906,0.7993,0.7974]
 
-    colors = {"n=600": "tab:blue"}
+    colors = {"n=100": "tab:blue"}
 
     plt.figure(figsize=(10, 5))
 
-    # n_estimators=600
-    plt.plot(max_features, r2_600, marker='o', color=colors["n=600"], label="n_estimators=600")
+    # n_estimators=100
+    plt.plot(max_features, r2_100, marker='o', color=colors["n=100"], label="n_estimators=100")
 
     plt.vlines(
-        6, min(r2_600), max(r2_600),
+        5, min(r2_100), max(r2_100),
         color='black', linestyles='dashed',
-        label='max_features=6'
+        label='max_features=5'
     )
     plt.xlabel("max_features")
     plt.ylabel("R2")
     plt.title("Random Forest Cross-validation (max_features)")
-    plt.ylim(0.70, 0.86)
+    plt.ylim(0.67, 0.81)
     #plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    plt.savefig("graphs/cv_rf_max_features.png")
+    plt.savefig("graphs/not_shuffled_cv_rf_max_features.png")
 
 def plot_rf_cv_max_depth():
-    max_depth_list = [5, 10, 15, 20, 25, 30, 35,40,45,50]
+    max_depth_list = [5, 10, 15, 20, 25, 30, 35,40]
 
-    r2_600 = [0.7299,0.8435,0.8532,0.8521,0.8560,0.8523,0.8491,0.8554,0.8511,0.8498]
+    r2_100_5 = [0.7246,0.7856,0.8036,0.8082,0.7993,0.7954,0.7891,0.8003]
+    r2_100_6 = [0.7284,0.8202,0.8129,0.8055,0.8102,0.8150,0.8147,0.8146]
 
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 5))
 
     colors = {
-        "n=600": "tab:blue"
+        "n=5": "tab:blue",
+        "n=6": "tab:green"
     }
 
-    # n_estimators = 600
-    plt.plot(max_depth_list, r2_600, marker="o", color=colors["n=600"], label="n_estimators=600,n_features=6")
-
+    plt.plot(max_depth_list, r2_100_5, marker="o", color=colors["n=5"], label="n_estimators=100,n_features=5")
+    plt.plot(max_depth_list, r2_100_6, marker="o", color=colors["n=6"], label="n_estimators=100,n_features=6")
 
     plt.vlines(
-        25, min(r2_600), max(r2_600),
+        10, min(r2_100_6), max(r2_100_6),
         color='black', linestyles='dashed',
-        label='max_depth=25'
+        label='max_depth=10,n_features=6'
     )
 
     plt.xlabel("max_depth")
     plt.ylabel("R2")
     plt.title("Random Forest Cross-validation (max_depth)")
-    plt.ylim(0.72, 0.86)
+    plt.ylim(0.72, 0.83)
     plt.legend()
     plt.tight_layout()
-    plt.savefig("graphs/cv_rf_max_depth.png")
+    plt.savefig("graphs/not_shuffled_cv_rf_max_depth.png")
 
 def plot_rf_cv_min_samples_split():
     min_samples_split_list = list(range(2, 16))  # 2~15
 
-    # n_estimators=600, max_depth=None
-    r2_600_none = [
-        0.8496, 0.8511, 0.8522, 0.8527, 0.8500, 0.8432, 0.8457, 0.8473, 0.8474, 0.8411, 0.8419, 0.8375, 0.8398, 0.8323
+    # n_estimators=100, max_depth=None
+    r2_100_none = [
+        0.8164, 0.8061, 0.8149, 0.8094, 0.8039, 0.8010, 0.7925, 0.7964, 0.8011, 0.7822, 0.7835, 0.7789, 0.7770, 0.7678
     ]
 
-    # n_estimators=600, max_depth=25
-    r2_600_25 = [
-        0.8529, 0.8519, 0.8496, 0.8497, 0.8470, 0.8450, 0.8502, 0.8467, 0.8435, 0.8424, 0.8439, 0.8365, 0.8369, 0.8342
+    # n_estimators=100, max_depth=10
+    r2_100_10 = [
+        0.8087, 0.8043, 0.8063, 0.7985, 0.7989, 0.8052, 0.8003, 0.7907, 0.7905, 0.7832, 0.7894, 0.7742, 0.7596, 0.7671
     ]
 
-    plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 5))
 
     def plot_one(r2_list, label, color):
         best_idx = int(np.argmax(r2_list))
@@ -111,43 +110,41 @@ def plot_rf_cv_min_samples_split():
         plt.plot(min_samples_split_list, r2_list,
                  marker="o", label=label, color=color)
 
-    plot_one(r2_600_none, "n_estimators=600,n_features=6,max_depth=None", "tab:blue")
-    plot_one(r2_600_25,   "n_estimators=600,n_features=6,max_depth=25",   "tab:green")
+    plot_one(r2_100_none, "n_estimators=100,n_features=6,max_depth=None", "tab:blue")
+    plot_one(r2_100_10,   "n_estimators=100,n_features=6,max_depth=10",   "tab:green")
 
 
     plt.vlines(
-        2, min(r2_600_none), max(r2_600_none),
+        2, min(r2_100_none), max(r2_100_none),
         color='black', linestyles='dashed',
-        label='min_samples_split=2'
+        label='min_samples_split=2,max_depth=None'
     )
     plt.xlabel("min_samples_split")
     plt.xticks([2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15])
-    plt.ylabel("R2")
+    plt.ylabel(r"$R^2$")
     plt.title("Random Forest Cross-Validation (min_samples_split)")
-    plt.ylim(0.83, 0.86)
+    plt.ylim(0.75, 0.82)
     plt.legend()
     plt.tight_layout()
-    plt.savefig("graphs/cv_rf_min_samples_split.png")
+    plt.savefig("graphs/not_shuffled_cv_rf_min_samples_split.png")
 
 def plot_knn_cv_k_neighbors():
     k_list = list(range(1, 16))
 
     # weights = 'uniform'
     r2_uniform = [
-        0.7321, 0.7972, 0.8060, 0.8167, 0.8113,
-        0.8108, 0.8063, 0.8119, 0.8056, 0.7971,
-        0.8001, 0.7965, 0.7933, 0.7943, 0.7851
+        0.7422, 0.8029, 0.8052, 0.8069, 0.8038, 0.7985, 0.7963, 0.7873, 0.7878, 0.7873, 0.7772, 0.7683, 0.7669, 0.7623,
+        0.7584
     ]
 
     # weights = 'distance'
     r2_distance = [
-        0.7265, 0.7982, 0.8132, 0.8207, 0.8212,
-        0.8245, 0.8202, 0.8192, 0.8144, 0.8134,
-        0.8039, 0.8115, 0.8039, 0.8027, 0.8054
+        0.7356, 0.7993, 0.8251, 0.8068, 0.8167, 0.8045, 0.8150, 0.8146, 0.8122, 0.8084, 0.8013, 0.7922, 0.7866, 0.7801,
+        0.7839
     ]
 
     plt.figure(figsize=(10, 6))
-    plt.ylim(0.70, 0.83)
+    plt.ylim(0.73, 0.83)
     plt.xlim(0,16)
     plt.xticks(k_list)
 
@@ -161,9 +158,9 @@ def plot_knn_cv_k_neighbors():
     plt.plot(k_list, r2_distance, marker='o',
              label="weights=distance", color='tab:orange')
     plt.vlines(
-        6, min(r2_distance), max(r2_distance),
+        3, min(r2_distance), max(r2_distance),
         color='black', linestyles='dashed',
-        label='k_neighbors=6'
+        label='k_neighbors=3,weights=distance'
     )
 
     plt.xlabel("k_neighbors")
@@ -173,7 +170,7 @@ def plot_knn_cv_k_neighbors():
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig("graphs/cv_knn_k_neighbors.png")
+    plt.savefig("graphs/not_shuffled_cv_knn_k_neighbors.png")
     #plt.show()
 
 

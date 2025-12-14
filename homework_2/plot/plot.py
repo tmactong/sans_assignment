@@ -60,40 +60,6 @@ def plot_continuous_temporal_curve(
     # plt.show()
     plt.savefig(f'graphs/{model}_{train_percentage}_cons_temporal_curve.png')
 
-
-"""
-def plot_continuous_temporal_curve(
-        raw_data:pd.DataFrame, y_pred_train:np.ndarray, y_pred:np.ndarray,
-        train_idx: pd.Index, test_idx: pd.Index
-):
-    # Plot from 1st July to 30th July
-    pred = np.concatenate((y_pred_train, y_pred), axis=None)
-    pred_index = np.concatenate((train_idx.to_numpy(), test_idx.to_numpy()), axis=None)
-    sorted_pred = pd.DataFrame(pred, index=pred_index)
-    sorted_pred.sort_index()
-    raw_data = raw_data.assign(pred=sorted_pred)
-    selected_pred = raw_data.loc[TruncatedTimeStart:TruncatedTimeEnd, 'pred']
-    selected_train_idx, selected_test_idx = [], []
-    for idx in range(TruncatedTimeStart, TruncatedTimeEnd):
-        if idx in train_idx:
-            selected_train_idx.append(idx)
-        else:
-            selected_test_idx.append(idx)
-    plt.figure(figsize=(12, 5))
-    #plt.plot(list(range(TruncatedTimeStart,TruncatedTimeEnd+1)),selected_pred.values, linewidth=2)
-    plt.plot(selected_train_idx, selected_pred[selected_train_idx], '.', color='red', label='train')
-    plt.plot(selected_test_idx, selected_pred[selected_test_idx], '.', color='blue', label='test')
-    plt.plot(raw_data.loc[TruncatedTimeStart:TruncatedTimeEnd+1, 'RefSt_O3'], label='Reference', color='black', linewidth=2)
-    plt.xlabel('Date')
-    plt.ylabel('O3')
-    plt.title('Predicted Value')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-"""
-
-
-
 def plot_scatter(model, y_true: np.ndarray, y_pred: np.ndarray):
     fig, axs = plt.subplots(ncols=2, figsize=(12, 6))
 
@@ -121,3 +87,6 @@ def plot_scatter(model, y_true: np.ndarray, y_pred: np.ndarray):
     # plt.show()
     plt.savefig(f'graphs/{model}_70_residual_vs_predicted.png')
 
+
+def plot_daily_data(rmse: np.ndarray, r2: np.ndarray, dates: np.ndarray):
+    pass
