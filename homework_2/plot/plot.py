@@ -87,6 +87,26 @@ def plot_scatter(model, y_true: np.ndarray, y_pred: np.ndarray):
     # plt.show()
     plt.savefig(f'graphs/{model}_70_residual_vs_predicted.png')
 
+def plot_daily_r2(model: str, r2: list, dates: np.ndarray[np.datetime64], split_idx: int):
+    plt.figure(figsize=(12, 6))
+    plt.plot(dates[0:split_idx], r2[0:split_idx], color='darkgreen', label=r'Train data $R^2$')
+    plt.plot(dates[split_idx:], r2[split_idx:], color='darkorange', label=r'Test data $R^2$')
 
-def plot_daily_data(rmse: np.ndarray, r2: np.ndarray, dates: np.ndarray):
-    pass
+    plt.xlabel('Timestamp')
+    plt.title(r'$R^2$')
+    plt.legend()
+    plt.tight_layout()
+    # plt.show()
+    plt.savefig(f'graphs/not_shuffled_{model}_r2.png')
+
+def plot_daily_rmse(model:str, rmse: list, dates: np.ndarray[np.datetime64], split_idx: int):
+    plt.figure(figsize=(12, 6))
+    plt.plot(dates[0:split_idx], rmse[0:split_idx], color='darkgreen', label=r'Train data RMSE')
+    plt.plot(dates[split_idx:], rmse[split_idx:], color='darkorange', label=r'Test data RMSE')
+
+    plt.xlabel('Timestamp')
+    plt.title('RMSE')
+    plt.legend()
+    plt.tight_layout()
+    #plt.show()
+    plt.savefig(f'graphs/not_shuffled_{model}_rmse.png')

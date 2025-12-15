@@ -3,11 +3,28 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import root_mean_squared_error, r2_score, mean_absolute_error
 from arg_parser import get_cal_parser
-from plot.plot import plot_continuous_temporal_curve, plot_scatter, plot_daily_data
+from plot.plot import plot_continuous_temporal_curve, plot_scatter, plot_daily_r2, plot_daily_rmse
 from dataset import load_dataset, split_dataset
 import numpy as np
 import pandas as pd
 import settings
+
+def divide_daily_metric(true_metrics: np.ndarray[float],
+                        pred_metrics: np.ndarray[float],dates: np.ndarray[np.datetime64]) -> (list,list, list):
+    daily_true_metric, daily_pred_metric = [[]], [[]]
+    current_date = dates[0].astype('datetime64[D]')
+    divided_dates = [current_date]
+    for idx, npdate in enumerate(dates):
+        date = npdate.astype('datetime64[D]')
+        if date == current_date:
+            daily_true_metric[-1].append(true_metrics[idx])
+            daily_pred_metric[-1].append(pred_metrics[idx])
+        else:
+            current_date = date
+            divided_dates.append(date)
+            daily_true_metric.append([true_metrics[idx]])
+            daily_pred_metric.append([pred_metrics[idx]])
+    return daily_true_metric, daily_pred_metric, divided_dates
 
 
 def main():
@@ -86,10 +103,32 @@ def main():
             )
             plot_scatter(args.model,df[settings.RefColumn].to_numpy(), sorted_pred[0].to_numpy())
         else:
-            rmse = root_mean_squared_error(y_test, y_pred, multioutput='raw_values')
-            r2 = r2_score(y_test, y_pred, multioutput='raw_values')
-            plot_daily_data(rmse, r2, df.loc[args.train_data_weeks * 7 * 24:, settings.DateColumn].to_numpy())
-
+            """
+            np_dates = df.loc[args.train_data_weeks * 7 * 24:, settings.DateColumn].to_numpy()
+            daily_y_tests, daily_y_preds, dates = divide_daily_metric(y_test, y_pred, np_dates)
+            daily_rmse, daily_r2 = [],[]
+            for idx, daily_y_test in enumerate(daily_y_tests):
+                rmse = root_mean_squared_error(daily_y_test, daily_y_preds[idx])
+                r2 = r2_score(daily_y_test, daily_y_preds[idx])
+                daily_rmse.append(rmse)
+                daily_r2.append(r2)
+            print(daily_r2)
+            # plot_daily_r2(daily_r2, dates)
+            plot_daily_rmse(daily_rmse, dates)
+            """
+            np_dates = df.loc[:, settings.DateColumn].to_numpy()
+            daily_y_tests, daily_y_preds, dates = divide_daily_metric(
+                df.loc[:, settings.RefColumn].to_numpy(), np.concatenate((y_pred_train,y_pred)), np_dates)
+            # print(dates)
+            daily_rmse, daily_r2 = [], []
+            for idx, daily_y_test in enumerate(daily_y_tests):
+                rmse = root_mean_squared_error(daily_y_test, daily_y_preds[idx])
+                r2 = r2_score(daily_y_test, daily_y_preds[idx])
+                daily_rmse.append(rmse)
+                daily_r2.append(r2)
+            # print(daily_r2)
+            plot_daily_r2(args.model,daily_r2, dates, int(len(y_pred_train)/24))
+            plot_daily_rmse(args.model,daily_rmse, dates, int(len(y_pred_train)/24))
 
 
 if __name__ == "__main__":
