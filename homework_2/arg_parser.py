@@ -1,5 +1,15 @@
 import argparse
 
+def get_denoise_parser():
+    parser = argparse.ArgumentParser(prog='denoise.py', description='Denoise the LCS data')
+    parser.add_argument('dataset', help='Dataset file')
+    parser.add_argument('--rank', type=int,choices=list(range(1,25)),help='r-rank approximation')
+    parser.add_argument('--x_from', choices=['ref', 'estimation'],
+                        help='construct matrix X from reference data or estimation')
+    parser.add_argument('--x_from_file', help='construct matrix X from source')
+    parser.add_argument('--est_from',type=str,help='estimated data source')
+    parser.add_argument('--x_rank', type=int,help='Matrix X rank')
+    return parser
 
 def get_cal_parser():
     parser = argparse.ArgumentParser(prog="calibrate.py", description="Calibration of LCS")
@@ -10,6 +20,7 @@ def get_cal_parser():
     parser.add_argument('--train_data_weeks', type=int, choices=[1,2,3,4],
                         default=4,help='Number of training weeks')
     parser.add_argument('--plot', action='store_true', help='Plot figure')
+    parser.add_argument('--store', action='store_true', help='store estimated data')
     parser.add_argument(
         '--train_percentage', type=float, default=0.7,
         help='Percentage of dataset to split into train and test')

@@ -129,6 +129,14 @@ def main():
             # print(daily_r2)
             plot_daily_r2(args.model,daily_r2, dates, int(len(y_pred_train)/24))
             plot_daily_rmse(args.model,daily_rmse, dates, int(len(y_pred_train)/24))
+    if args.store:
+        sorted_pred.to_csv(
+            'est/{shuffle}/{model}_{train_percentage}.csv'.format(
+                shuffle='shuffled' if args.shuffle else 'not_shuffled',
+                model=args.model, train_percentage=args.train_percentage * 100),
+            header=['Est.'],
+            index=False
+        )
 
 
 if __name__ == "__main__":

@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import typing as t
@@ -37,8 +38,33 @@ def get_all_days(filename:str):
     )
     print('\n'.join(sorted(pd.unique(df.date))))
 
+def daily_ref_data(filename:str) -> np.ndarray:
+    df = load_dataset(filename)
+    ref = df.loc[:, settings.RefColumn].to_numpy()
+    dates = df.loc[:, settings.DateColumn].to_numpy()
+    current_date = dates[0].astype('datetime64[D]')
+    daily_refs = [[]]
+    for idx, np_date in enumerate(dates):
+        date = np_date.astype('datetime64[D]')
+        if date == current_date:
+            daily_refs[-1].append(ref[idx])
+        else:
+            current_date = date
+            daily_refs.append([ref[idx]])
+    return np.array(daily_refs)
+
+def load_est_data(filename:str) -> pd.DataFrame:
+    df = pd.read_csv(filename)
+    return df
+
+def load_ref_data(filename:str) -> pd.DataFrame:
+    df = load_dataset(filename)
+    return df[settings.RefColumn].to_numpy()
 
 
 if __name__ == '__main__':
-    print(len(load_dataset('dataset/data_Hw2.csv')))
+    # print(len(load_dataset('dataset/data_Hw2.csv')))
     # get_all_days('dataset/data_Hw2.csv')
+    # daily_refs = daily_ref_data('dataset/data_Hw2.csv')
+    df = load_est_data('est/rf_70.0.csv')
+    print(df['Est.'])
