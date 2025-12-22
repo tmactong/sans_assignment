@@ -3,7 +3,7 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import root_mean_squared_error, r2_score, mean_absolute_error
 from arg_parser import get_cal_parser
-from plot.plot import plot_continuous_temporal_curve, plot_scatter, plot_daily_r2, plot_daily_rmse
+from plot.plot import plot_continuous_temporal_curve, plot_scatter, plot_daily_r2, plot_daily_rmse, plot_daily_r2_and_rmse
 from dataset import load_dataset, split_dataset
 import numpy as np
 import pandas as pd
@@ -127,8 +127,9 @@ def main():
                 daily_rmse.append(rmse)
                 daily_r2.append(r2)
             # print(daily_r2)
-            plot_daily_r2(args.model,daily_r2, dates, int(len(y_pred_train)/24))
-            plot_daily_rmse(args.model,daily_rmse, dates, int(len(y_pred_train)/24))
+            #plot_daily_r2(args.model,daily_r2, dates, int(len(y_pred_train)/24))
+            #plot_daily_rmse(args.model,daily_rmse, dates, int(len(y_pred_train)/24))
+            plot_daily_r2_and_rmse(args.model,daily_r2, daily_rmse,dates, int(len(y_pred_train)/24))
     if args.store:
         sorted_pred.to_csv(
             'est/{shuffle}/{model}_{train_percentage}.csv'.format(

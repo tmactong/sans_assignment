@@ -95,8 +95,8 @@ def run():
     denoised_r2 = r2_score(ref_data[new_mask], denoised_daily_est.ravel())
 
     # print(f'rank={args.rank},rmse={round(denoised_rmse,3)},r2={round(denoised_r2,3)}')
-    # print(f'|{args.rank}|{round(denoised_rmse, 3)}|{round(denoised_r2, 3)}|')
-    print(','.join(map(str, singular_values)))
+    print(f'|{args.rank}|{round(denoised_rmse, 3)}|{round(denoised_r2, 3)}|')
+    # print(','.join(map(str, singular_values)))
     return denoised_rmse
 
 

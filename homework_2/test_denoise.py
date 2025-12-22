@@ -83,20 +83,20 @@ def main():
     for i in range(1,25):
         """X from Estimation"""
         ### not shuffled RF; x_rank=86,optimal rmse idx=16,theoretical rank=3
-        # rmse,r2, t_rank = run(x_rank, i,'estimation','est/shuffled/rf_70.0.csv', 'est/rf_70.0.csv')
-        ### not shuffled KNN around 95;x_rank=95,optimal rmse idx=7,theoretical rank=3
-        rmse, r2,t_rank = run(x_rank, i, 'estimation', 'est/shuffled/knn_70.0.csv', 'est/knn_70.0.csv')
+        # rmse,r2, t_rank = run(x_rank, i,'estimation','est/shuffled/rf_70.0.csv', 'est/not_shuffled/rf_70.0.csv')
+        ### not shuffled KNN ;x_rank=105,optimal rmse idx=7,theoretical rank=3
+        # rmse, r2,t_rank = run(x_rank, i, 'estimation', 'est/shuffled/knn_70.0.csv', 'est/not_shuffled/knn_70.0.csv')
         ### not shuffled MLR can't be optimized
-        # rmse,r2, t_rank = run(x_rank, i, 'estimation', 'est/shuffled/mlr_70.0.csv', 'est/mlr_70.0.csv')
+        # rmse,r2, t_rank = run(x_rank, i, 'estimation', 'est/shuffled/mlr_70.0.csv', 'est/not_shuffled/mlr_70.0.csv')
 
 
         """X from Reference"""
         ### not shuffled RF, x_rank=92,optimal rmse idx=12,theoretical rank=3
-        # rmse,r2, t_rank = run(x_rank, i,'ref','', 'est/rf_70.0.csv')
+        rmse,r2, t_rank = run(x_rank, i,'ref','', 'est/not_shuffled/rf_70.0.csv')
         ### not shuffled KNN x_rank=103,optimal rmse idx=5,theoretical rank=4
-        #rmse,r2, t_rank = run(x_rank, i, 'ref', '', 'est/knn_70.0.csv')
+        # rmse,r2, t_rank = run(x_rank, i, 'ref', '', 'est/not_shuffled/knn_70.0.csv')
         ### not shuffled MLR, can't be optimized
-        # rmse,r2, t_rank = run(x_rank, i, 'ref', '', 'est/mlr_70.0.csv')
+        # rmse,r2, t_rank = run(x_rank, i, 'ref', '', 'est/not_shuffled/mlr_70.0.csv')
 
 
         ##### denoising shuffled training ######

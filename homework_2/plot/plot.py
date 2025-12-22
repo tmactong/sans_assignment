@@ -31,13 +31,13 @@ def plot_continuous_temporal_curve(
     selected_true = y_true[TruncatedTimeStart:TruncatedTimeEnd]
     selected_idx = list(range(TruncatedTimeStart,TruncatedTimeEnd))
     selected_dates = dates[TruncatedTimeStart:TruncatedTimeEnd]
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(12, 5))
     """
     plt.plot(selected_idx, selected_true, color='green', label='Reference Value')
     plt.plot(selected_idx, selected_pred, color='darkorange', label='Estimated Value')
     """
-    plt.plot(selected_dates, selected_true, color='green', label='Reference Value')
-    plt.plot(selected_dates, selected_pred, color='darkorange', label='Estimated Value')
+    plt.plot(selected_dates, selected_true, color='green', label='Ref. value')
+    plt.plot(selected_dates, selected_pred, color='darkorange', label='Est. value')
 
     # scatter
     selected_test_idx = [idx for idx in selected_idx if idx in test_idx]
@@ -45,19 +45,18 @@ def plot_continuous_temporal_curve(
     selected_pred = [y_pred[idx] for idx in selected_test_idx]
     """
     plt.scatter(
-        selected_test_idx, selected_pred, color='red', marker='.',label='Estimated Value From test data'
+        selected_test_idx, selected_pred, color='red', marker='.',label='Est. Value From test data'
     )
     """
     plt.scatter(
-        selected_test_dates, selected_pred, color='red', marker='.',label='Estimated Value From test data'
+        selected_test_dates, selected_pred, color='red', marker='.',label='Est. value from test data'
     )
 
     plt.xlabel('Timestamp')
-    plt.ylabel(r'O_3 (\mu gr/m^3)')
-    plt.title('Predicted Value')
+    plt.ylabel(r'$O_3 (\mu gr/m^3)$')
     plt.legend()
     plt.tight_layout()
-    # plt.show()
+    #plt.show()
     plt.savefig(f'graphs/{model}_{train_percentage}_cons_temporal_curve.png')
 
 def plot_scatter(model, y_true: np.ndarray, y_pred: np.ndarray):
@@ -87,8 +86,20 @@ def plot_scatter(model, y_true: np.ndarray, y_pred: np.ndarray):
     # plt.show()
     plt.savefig(f'graphs/{model}_70_residual_vs_predicted.png')
 
+def plot_daily_rmse(model:str, rmse: list, dates: np.ndarray[np.datetime64], split_idx: int):
+    plt.figure(figsize=(12, 5))
+    plt.plot(dates[0:split_idx], rmse[0:split_idx], color='darkgreen', label=r'Train data RMSE')
+    plt.plot(dates[split_idx:], rmse[split_idx:], color='darkorange', label=r'Test data RMSE')
+
+    plt.xlabel('Timestamp')
+    plt.title('RMSE')
+    plt.legend()
+    plt.tight_layout()
+    # plt.show()
+    plt.savefig(f'graphs/not_shuffled_{model}_rmse.png')
+
 def plot_daily_r2(model: str, r2: list, dates: np.ndarray[np.datetime64], split_idx: int):
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(12, 5))
     plt.plot(dates[0:split_idx], r2[0:split_idx], color='darkgreen', label=r'Train data $R^2$')
     plt.plot(dates[split_idx:], r2[split_idx:], color='darkorange', label=r'Test data $R^2$')
 
@@ -99,14 +110,41 @@ def plot_daily_r2(model: str, r2: list, dates: np.ndarray[np.datetime64], split_
     # plt.show()
     plt.savefig(f'graphs/not_shuffled_{model}_r2.png')
 
-def plot_daily_rmse(model:str, rmse: list, dates: np.ndarray[np.datetime64], split_idx: int):
-    plt.figure(figsize=(12, 6))
-    plt.plot(dates[0:split_idx], rmse[0:split_idx], color='darkgreen', label=r'Train data RMSE')
-    plt.plot(dates[split_idx:], rmse[split_idx:], color='darkorange', label=r'Test data RMSE')
+def plot_daily_r2_and_rmse(
+        model: str,
+        r2: list,
+        rmse: list,
+        dates: np.ndarray[np.datetime64],
+        split_idx: int
+):
+    fig, axs = plt.subplots(1, 2, figsize=(12, 5))
 
-    plt.xlabel('Timestamp')
-    plt.title('RMSE')
-    plt.legend()
+    # -------- left: daily R2 --------
+    axs[0].plot(
+        dates[0:split_idx], r2[0:split_idx],
+        color='darkgreen', label=r'Train data $R^2$'
+    )
+    axs[0].plot(
+        dates[split_idx:], r2[split_idx:],
+        color='darkorange', label=r'Test data $R^2$'
+    )
+    axs[0].set_xlabel('Timestamp')
+    axs[0].set_title(r'$R^2$')
+    axs[0].legend()
+
+    # -------- right: daily RMSE --------
+    axs[1].plot(
+        dates[0:split_idx], rmse[0:split_idx],
+        color='darkgreen', label=r'Train data RMSE'
+    )
+    axs[1].plot(
+        dates[split_idx:], rmse[split_idx:],
+        color='darkorange', label=r'Test data RMSE'
+    )
+    axs[1].set_xlabel('Timestamp')
+    axs[1].set_title('RMSE')
+    axs[1].legend()
+
     plt.tight_layout()
-    #plt.show()
-    plt.savefig(f'graphs/not_shuffled_{model}_rmse.png')
+    # plt.show()
+    plt.savefig(f'graphs/not_shuffled_{model}_r2_rmse.png')

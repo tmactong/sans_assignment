@@ -43,11 +43,12 @@ def get_cv_parser():
     )
     parser.add_argument('dataset', help='Dataset file')
     parser.add_argument(
-        '-m', '--model', choices=['mlr', 'rf', 'knn', 'gb'], help='Model name', required=True)
+        '-m', '--model', choices=['rf', 'knn'], help='Model name', required=True)
     parser.add_argument('--shuffle', action='store_true', help='Shuffle dataset')
     parser.add_argument(
         '--train_percentage', type=float, default=0.7,
         help='Percentage of dataset to split into train and test')
+    parser.add_argument('--weeks', type=int, choices=[1,2,3,4],help='Number of weeks to train')
     # KNN parameters
     parser.add_argument('--k_neighbors', type=int, help='Number of neighbors')
     parser.add_argument('--weights', type=str, choices=['uniform', 'distance'],

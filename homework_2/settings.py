@@ -8,6 +8,7 @@ CrossValidationTrainPercentage = 0.7
 CVKNNArguments = ['k_neighbors', 'weights']
 CVRFArguments = ['n_estimators', 'max_features','max_depth', 'min_samples_split']
 
+# NotShuffledTrainData=672
 
 # Denoising
 
