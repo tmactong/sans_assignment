@@ -19,6 +19,10 @@ def load_features_and_labels(filename:str) -> (pd.DataFrame, np.ndarray):
     df = load_dataset(filename)
     return df.loc[:, settings.FeatureColumns], df.loc[:, [settings.RefColumn]][settings.RefColumn].to_numpy()
 
+def load_selected_features_and_labels(filename:str, features: list[str]) -> (pd.DataFrame, np.ndarray):
+    df = load_dataset(filename)
+    return df.loc[:, features], df.loc[:, [settings.RefColumn]][settings.RefColumn].to_numpy()
+
 def load_features_and_labels_together(filename:str) -> pd.DataFrame:
     df = load_dataset(filename)
     return df.loc[:,settings.FeatureColumns + [settings.RefColumn]]
