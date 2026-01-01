@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from sklearn.model_selection import GridSearchCV, train_test_split
+from sklearn.model_selection import GridSearchCV, train_test_split, TimeSeriesSplit
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import root_mean_squared_error, r2_score
 import pandas as pd
@@ -54,64 +54,32 @@ def boosting_iterations():
     plt.show()
 
 
-def exhaustive_search_shuffle():
-    X, y = load_features_and_labels(settings.DatasetFile)
-    x_train, x_test, y_train, y_test = train_test_split(
-        X, y,
-        train_size=0.7,
-        shuffle=True,
-        random_state=42
-    )
-    gb = GradientBoostingRegressor(random_state=42)
-    gscv = GridSearchCV(
-        gb,
-        param_grid={
-            'n_estimators': [390, 400, 410],
-            'max_depth': [5],
-            'min_samples_split': [2],
-            'learning_rate': [0.04, 0.05, 0.06]
-        },
-        scoring='r2',
-        cv=5,
-        return_train_score=True,
-        verbose=2
-    )
-    gscv.fit(x_train, y_train)
-    # best_model = gscv.best_estimator_
-    best_params = gscv.best_params_
-    print(f'best_params: {best_params}')
-    results = pd.DataFrame(gscv.cv_results_)
-    summary = results[
-        [
-            "param_n_estimators",
-            "param_max_depth",
-            "param_min_samples_split",
-            "param_learning_rate",
-            "mean_test_score",
-            "std_test_score",
-        ]
-    ].sort_values("mean_test_score", ascending=False)
-    print(summary.head())
-
-
 non_shuffled_1st_gb_params = {
-    'n_estimators': [200,250,300],
-    'max_depth': [3,4,5],
+    'n_estimators': [100,150,200],
+    'max_depth': [2,3],
     'min_samples_split': [3,4,5],
-    'learning_rate': [0.01,0.05,0.1],
+    'learning_rate': [0.05,0.1,0.15],
 }
 
 def exhaustive_search_non_shuffle(train_size):
     X, y = load_features_and_labels(settings.DatasetFile)
-    x_train = X.loc[0: int(4223*train_size) - 1, settings.FeatureColumns]
-    y_train = y[0: int(4223*train_size)]
+    x_train, x_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        train_size=train_size,
+        shuffle=False
+    )
+    #x_train = X.loc[0: int(4223*train_size) - 1, settings.FeatureColumns]
+    #y_train = y[0: int(4223*train_size)]
     gb = GradientBoostingRegressor(random_state=42)
+    tscv = TimeSeriesSplit(n_splits=5)
     gscv = GridSearchCV(
         gb,
         param_grid=non_shuffled_1st_gb_params,
         scoring='r2',
-        cv=5,
+        cv=tscv,
         return_train_score=True,
+        n_jobs=4,
         verbose=2
     )
     gscv.fit(x_train, y_train)
@@ -119,13 +87,19 @@ def exhaustive_search_non_shuffle(train_size):
     print(f'best_params: {best_params}')
 
 
-def non_shuffle(train_size: float,selected_features: list[str]=settings.FeatureColumns):
+def non_shuffle(train_size: float,comment: str,selected_features: list[str]=settings.FeatureColumns):
     X, y = load_selected_features_and_labels(settings.DatasetFile, selected_features)
-    x_train = X.loc[0:int(4223*train_size) - 1, selected_features]
-    print(x_train.head())
-    x_test = X.loc[int(4223*train_size):, selected_features]
-    y_train = y[0:int(4223*train_size)]
-    y_test = y[int(4223*train_size):]
+    x_train, x_test, y_train, y_test = train_test_split(
+        X,
+        y,
+        train_size=train_size,
+        shuffle=False
+    )
+    #x_train = X.loc[0:int(4223*train_size) - 1, selected_features]
+    #print(x_train.head())
+    #x_test = X.loc[int(4223*train_size):, selected_features]
+    #y_train = y[0:int(4223*train_size)]
+    #y_test = y[int(4223*train_size):]
     train_idx = x_train.index
     test_idx = x_test.index
     gb = GradientBoostingRegressor(
@@ -149,14 +123,14 @@ def non_shuffle(train_size: float,selected_features: list[str]=settings.FeatureC
     sorted_pred = pd.DataFrame(pred, index=pred_index).sort_index()
     overall_rmse = round(root_mean_squared_error(y, sorted_pred), 3)
     overall_r2 = round(r2_score(y, sorted_pred), 3)
-    print(f"|{train_size}|{train_r2}|{train_rmse}|{test_r2}|{test_rmse}|{overall_r2}|{overall_rmse}|")
+    print(f"|{comment}|{train_r2}|{train_rmse}|{test_r2}|{test_rmse}|{overall_r2}|{overall_rmse}|")
 
 
 if __name__ == "__main__":
     # boosting_iterations()
-    # exhaustive_search_shuffle()
-    # main()
-    # exhaustive_search_non_shuffle(train_size=0.3)
-    # non_shuffle(train_size=0.3, selected_features=non_shuffle_features[0.3])
-    non_shuffle(train_size=0.9)
-    # non_shuffle(train_size=0.3, selected_features=non_shuffle_features_lasso[0.3])
+    # exhaustive_search_non_shuffle(train_size=0.1)
+    train_size = 0.8
+    print(f'train_size: {train_size}')
+    non_shuffle(train_size=train_size, comment='full features')
+    non_shuffle(train_size=train_size, comment='fss selected features',selected_features=non_shuffle_features[train_size])
+    non_shuffle(train_size=train_size, comment='lasso selected features',selected_features=non_shuffle_features_lasso[train_size])
